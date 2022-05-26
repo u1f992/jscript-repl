@@ -1,0 +1,21 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                // モジュールの処理はRollupに任せます。
+                "modules": false,
+
+                // 可能な限りObject.definePropertiesを使用しないES3に変換します。
+                "targets": {
+                    "ie": 8
+                },
+                "loose": true,
+
+                // この設定によって、core-jsから自動でポリフィルが導入されます。
+                "useBuiltIns": "usage",
+                "corejs": 3
+            }
+        ]
+    ]
+}
