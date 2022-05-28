@@ -2,27 +2,31 @@ import { Code } from "./code";
 import { router } from "./router";
 
 export class REPL {
-    private readonly _stdin: TextStreamReader;
-    private readonly _stdout: TextStreamWriter;
-    private readonly _stderr: TextStreamWriter;
+    private readonly stdin: TextStreamReader;
+    private readonly stdout: TextStreamWriter;
+    private readonly stderr: TextStreamWriter;
     constructor(io: { stdin: TextStreamReader, stdout: TextStreamWriter, stderr: TextStreamWriter }) {
-        this._stdin = io.stdin;
-        this._stdout = io.stdout;
-        this._stderr = io.stderr;
+        this.stdin = io.stdin;
+        this.stdout = io.stdout;
+        this.stderr = io.stderr;
+    }
+    private readonly prompts = {
+        firstLine: '> ',
+        continueLine: '... '
     }
     start() {
 
         while (true) {
 
             let code = new Code();
-            let prompt = '> ';
+            let prompt = this.prompts.firstLine;
 
             while (true) {
 
                 // プロンプトを表示して入力を受け付ける
-                this._stdout.Write(prompt);
+                this.stdout.Write(prompt);
                 try {
-                    code = code.add(this._stdin.ReadLine());
+                    code = code.add(this.stdin.ReadLine());
                 } catch (error) { }
 
                 // dot commandが含まれているか検査する
@@ -30,7 +34,7 @@ export class REPL {
                 if (command !== null) {
                     command();
                     code = new Code();
-                    prompt = '> ';
+                    prompt = this.prompts.firstLine;
                     continue;
                 }
 
@@ -38,13 +42,13 @@ export class REPL {
                     break;
                 } else {
                     // 複数行に渡って入力を続ける場合は、プロンプトが変わる
-                    prompt = '... ';
+                    prompt = this.prompts.continueLine;
                 }
             }
 
             try {
                 const ret = eval(code.raw);
-                this._stdout.WriteLine(ret);
+                this.stdout.WriteLine(ret);
 
             } catch (error) {
                 let message = '';
@@ -68,7 +72,7 @@ export class REPL {
                     }
                 }
 
-                this._stderr.WriteLine(`Uncaught ${message}`);
+                this.stderr.WriteLine(`Uncaught ${message}`);
             }
         }
     }
