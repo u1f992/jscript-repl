@@ -48,7 +48,7 @@ export class REPL {
 
             try {
                 const ret = eval(code.raw);
-                this.stdout.WriteLine(ret);
+                this.stdout.WriteLine(this.styling(ret));
 
             } catch (error) {
                 let message = '';
@@ -58,22 +58,43 @@ export class REPL {
                     message = `${error.name}: ${error.message}`;
 
                 } else {
-                    if (typeof error === 'number' || typeof error === 'boolean') {
-                        message = error.toString();
-
-                    } else if (typeof error === 'string') {
-                        message = `'${error}'`;
-
-                    } else {
-                        // ここでエラーが出る分にはしょうがない
-                        try {
-                            message = (error as any).toString();
-                        } catch (error) { }
-                    }
+                    // ここでエラーが出る分にはしょうがない
+                    try {
+                        message = this.styling(error);
+                    } catch (error) { }
                 }
 
                 this.stderr.WriteLine(`Uncaught ${message}`);
             }
+        }
+    }
+    private styling(value: any): string {
+        const type = typeof value;
+        switch (type) {
+            case 'number':
+            case 'boolean':
+                return '\x1b[33m' + value.toString() + '\x1b[0m';
+            case 'string':
+                return `\x1b[32m'${value}'\x1b[0m`;
+            case 'undefined':
+                return `\x1b[38;5;8mundefined\x1b[0m`;
+            case 'object':
+                const keys = Object.keys(value);
+                if (keys.length === 0) {
+                    return '{}';
+                }
+                let stringified = '{ ';
+                keys.forEach(key => {
+                    stringified += `${key}: ${this.styling(value[key])} ,`
+                });
+                return stringified.slice(0, -1) + '}';
+            default:
+                // それ以外は知らん
+                try {
+                    return value.toString();
+                } catch (error) {
+                    return '';
+                }
         }
     }
 }

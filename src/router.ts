@@ -23,6 +23,7 @@ class Router {
 .load     Load JS from a file into the REPL session
 .save     Save all evaluated commands in this REPL session to a file
 
+Ctrl+C to exit the REPL
 `); }
         },
         load: {
