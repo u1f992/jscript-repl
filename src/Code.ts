@@ -1,4 +1,4 @@
-import { Bracket } from "./Bracket";
+import { Bracket } from "./bracket";
 
 /**
  * コードを表すクラス

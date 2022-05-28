@@ -1,4 +1,4 @@
-import { Code } from "./Code";
+import { Code } from "./code";
 
 const stdin = WScript.StdIn;
 const stdout = WScript.StdOut;
