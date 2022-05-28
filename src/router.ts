@@ -1,8 +1,7 @@
-interface DotCommand { regexp: RegExp, func: Function }
 class Router {
     
     // (スペースor行頭)<.command>行末
-    private readonly commands: { [key: string]: DotCommand } = {
+    private readonly commands: { [key: string]: { regexp: RegExp, func: Function } } = {
         break: {
             regexp: /(\s|^)\.break($|\n|\r\n)/,
             func: () => { }
