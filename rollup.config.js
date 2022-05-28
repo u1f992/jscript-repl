@@ -10,17 +10,15 @@ export default [
             format: 'es'
         },
         plugins: [
-            // tsconfig.jsonに従って、TypeScriptがトランスパイルされます。
             typescript(),
-
-            // .babelrcに従って、ES3へトランスパイルされます。
+            // babelの前にcommonjsらしい
+            commonjs(),
             babel({
                 babelHelpers: 'bundled',
                 extensions: ['.js', '.ts'],
+                exclude: [/\/core-js\//]
             }),
-
-            // CommonJSモジュールをES Modulesに揃えます。
-            commonjs()
+            
         ]
     }
 ];
