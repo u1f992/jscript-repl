@@ -1,4 +1,5 @@
 import { Code } from "./code";
+import { router } from "./router";
 
 export class REPL {
     private readonly _stdin: TextStreamReader;
@@ -10,6 +11,7 @@ export class REPL {
         this._stderr = io.stderr;
     }
     start() {
+
         while (true) {
 
             let code = new Code();
@@ -22,6 +24,15 @@ export class REPL {
                 try {
                     code = code.add(this._stdin.ReadLine());
                 } catch (error) { }
+
+                // dot commandが含まれているか検査する
+                const command = router.find(code.raw);
+                if (command !== null) {
+                    command();
+                    code = new Code();
+                    prompt = '> ';
+                    continue;
+                }
 
                 if (code.isClosed()) {
                     break;
